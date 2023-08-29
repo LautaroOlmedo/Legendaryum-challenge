@@ -4,7 +4,9 @@
   "description": "backend challenge",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node dist/cmd/index.js",
+    "start:dev": "tsc && concurrently \"tsc -w\" \"nodemon dist/cmd/index.js\""
   },
   "repository": {
     "type": "git",
