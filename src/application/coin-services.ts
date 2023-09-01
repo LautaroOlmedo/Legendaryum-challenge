@@ -5,7 +5,6 @@ import {CoinDTO} from "./DTOs/coin-dto";
 export class CoinService {
    constructor(private readonly repository: ICoinRepository) {
    }
-
    public async generate(coinQuantity: number, area: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number }): Promise<Coin[] | Error>{
       try {
           let coins: Coin[] = [];
