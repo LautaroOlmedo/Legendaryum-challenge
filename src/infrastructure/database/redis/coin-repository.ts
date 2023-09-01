@@ -2,13 +2,17 @@ import Redis from 'redis';
 
 // ---------- ---------- ---------- ---------- ----------
 
-import {ICoinRepository} from "../../../domain/coin-repository";
+
 import {Coin} from "../../../domain/coin";
+import {ICoinRepository} from "../../../domain/coin-repository";
+
 
 export class CoinRepositoryRedis implements ICoinRepository{
     constructor() {
+    }
 
-
+    public async getAll(): Promise<any> {
+        return Promise.resolve(undefined);
     }
 
     public async generate(coin: Coin): Promise<any> {
@@ -18,5 +22,11 @@ export class CoinRepositoryRedis implements ICoinRepository{
             
         }
     }
+
+    delete(coinID: string): Promise<any> {
+        return Promise.resolve(undefined);
+    }
+
+
 
 }

@@ -1,14 +1,12 @@
 import express, { Request, Response } from 'express';
 import morgan from "morgan";
 import http from 'http';
-
-import path from 'path'
-
-// --------------------------------------------------------
-
-import { roomRouter } from "./room-router";
 import {SocketServer} from "../socket/socket-server";
+
+// ---------- ---------- ---------- ---------- ----------
+
 import {config} from '../config';
+import { roomRouter } from "./room-router";
 
 
 const {port} = config.server;

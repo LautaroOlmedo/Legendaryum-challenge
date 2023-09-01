@@ -1,5 +1,5 @@
 export class Coin{
-    constructor(id: number) {
+    constructor(id: string) {
         this.id = id;
         //this.coinName = coinName;
         this.positionX = 0;
@@ -7,7 +7,7 @@ export class Coin{
         this.positionZ = 0;
     }
     //public coinName: string;
-    public id: number
+    public id: string
     public positionX: number
     public positionY: number
     public positionZ: number
