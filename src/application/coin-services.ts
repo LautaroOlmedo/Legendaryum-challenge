@@ -69,6 +69,5 @@ export class CoinService {
        }catch (e) {
            console.log(e)
        }
-
     }
 }
