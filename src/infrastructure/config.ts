@@ -3,6 +3,6 @@ export const config = {
         port: process.env.PORT || 8000,
     },
     redis: {
-        url: process.env.REDIS_URL || "http://localhost:8000"
+        url: process.env.REDIS_URL || "redis://localhost:6379"
     }
 };

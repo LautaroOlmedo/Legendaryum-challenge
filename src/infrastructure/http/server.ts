@@ -7,6 +7,8 @@ import {SocketServer} from "../socket/socket-server";
 
 import {config} from '../config';
 import { roomRouter } from "./room-router";
+import {metaverseRoomRouter} from "./metaverseRoom-router";
+
 
 
 const {port} = config.server;
@@ -17,6 +19,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(morgan('dev'));
 
 app.use('/api/room', roomRouter);
+app.use('/api/metaverseRoom', metaverseRoomRouter);
 
 
 let server: http.Server;

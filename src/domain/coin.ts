@@ -12,4 +12,8 @@ export class Coin{
     public positionY: number
     public positionZ: number
 
+    public getID(): string{
+        return this.id
+    }
+
 }

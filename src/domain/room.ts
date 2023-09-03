@@ -6,5 +6,13 @@ export class Room{
     }
     private id: string;
     private roomName: string;
+
+    public getID(): string{
+        return this.id;
+    }
+
+    public getName(): string{
+        return this.roomName;
+    }
 }
 

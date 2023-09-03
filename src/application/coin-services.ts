@@ -68,6 +68,7 @@ export class CoinService {
            return null;
        }catch (e) {
            console.log(e)
+           throw new Error('internal server error')
        }
     }
 }

@@ -1,31 +1,79 @@
-import Redis from 'redis';
+import Redis from 'ioredis';
 
 // ---------- ---------- ---------- ---------- ----------
 
-
 import {Coin} from "../../../domain/coin";
 import {ICoinRepository} from "../../../domain/coin-repository";
+import {CacheManager} from "./redis";
 
 
 export class CoinRepositoryRedis implements ICoinRepository{
-    constructor() {
+    constructor(private readonly cacheManager: CacheManager) {
     }
 
     public async getAll(): Promise<any> {
-        return Promise.resolve(undefined);
+        //const client: Redis = this.cacheManager.client;
+
+       try {
+           const coinKeys: string[] = await this.client.smembers('coins');
+
+
+           const coins: Coin[] = [];
+           for (const coinKey of coinKeys) {
+               const coinData: string | null = await this.client.get(coinKey);
+               if (coinData) {
+                   coins.push(JSON.parse(coinData));
+               }
+           }
+
+           return coins;
+       }catch (e) {
+           console.error(e);
+       }
     }
 
     public async generate(coin: Coin): Promise<any> {
+        //const client: Redis = this.cacheManager.client;
         try {
-            
+            const isConnected: boolean = await this.cacheManager.isHealthy();
+            if (!isConnected) {
+                throw new Error('No se pudo conectar a Redis');
+            }
+            //await this.client.multi();
+
+
+
+            const coinKey: string = `coin:${coin.id}`;
+            const coinData: string = JSON.stringify(coin);
+            await this.client.set(coinKey, coinData);
+
+            await this.client.sadd('coins', coinKey);
+
+
+
+            //const results = await this.client.exec();
+
+
+
+          //if(results === null){
+            //  throw new Error('La transacción en Redis falló');
+          //}
+            // @ts-ignore
+            //if (!results.every((result) => result === 'OK')) {
+              //  throw new Error('La transacción en Redis falló');
+            //}
+            return coin;
         }catch (e) {
-            
+            console.error('Error al crear la moneda en Redis:', e);
+            throw e;
         }
     }
 
     delete(coinID: string): Promise<any> {
         return Promise.resolve(undefined);
     }
+
+    private client: Redis = this.cacheManager.client;
 
 
 

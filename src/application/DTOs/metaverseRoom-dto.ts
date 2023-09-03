@@ -10,6 +10,8 @@ import {
 } from "class-validator";
 import { Type } from 'class-transformer';
 export class MetaverseRoomDTO{
+    constructor(private readonly  roomAreaDTO: RoomAreaDTO) {
+    }
     @IsString()
     @IsNotEmpty()
     roomName!: string
@@ -26,7 +28,7 @@ export class MetaverseRoomDTO{
     coinQuantity!: number
 }
 
-class RoomAreaDTO {
+export class RoomAreaDTO {
     @IsNotEmpty()
     @IsNumber()
     xmin!: number;
