@@ -34,6 +34,8 @@ export class RoomRepositoryRedis implements IRoomRepository{
                 throw new Error('could not connect to Redis');
             }
 
+            //await this.client.multi();
+
             const roomKey: string = `room:${room.getID()}`;
             const roomData: string = JSON.stringify(room);
             await this.client.rpush(roomKey, roomData);
@@ -42,6 +44,12 @@ export class RoomRepositoryRedis implements IRoomRepository{
                 throw new Error('could not add coins to the room');
            }
             console.log(room)
+
+            //const results = await this.client.exec();
+
+            //if (!results.every((result) => result === 'OK')) {
+            //  throw new Error('the transaction failed');
+            //}
             return room;
         } catch (e) {
             console.error('internal server error', e);
