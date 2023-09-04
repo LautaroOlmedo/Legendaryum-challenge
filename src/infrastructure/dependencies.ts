@@ -7,6 +7,7 @@ import {RoomController} from "./http/room-controller";
 import {CacheManager} from "./database/redis/redis";
 import {config} from "./config";
 import {MetaverseRoomController} from "./http/metaverseRoom-controller";
+import {CoinCronJob} from "./cronjob/coin-cronJob";
 
 const cacheManager: CacheManager = new CacheManager(config.redis.url)
 
@@ -18,7 +19,8 @@ const roomRepositoryRedis: RoomRepositoryRedis = new RoomRepositoryRedis(cacheMa
 const roomService: RoomService = new RoomService(roomRepositoryRedis);
 
 const metaverseRoomService: MetaverseRoomService = new MetaverseRoomService(coinService, roomService);
+const coinCronJob: CoinCronJob = new CoinCronJob(coinService, roomService);
 
 
 export const roomController = new RoomController(roomService, cacheManager);
-export const metaverseRoomController = new MetaverseRoomController(metaverseRoomService)
+export const metaverseRoomController = new MetaverseRoomController(metaverseRoomService);
