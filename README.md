@@ -1,7 +1,7 @@
 DOCUMENTACIÓN:
 
 COMANDOS:
-- sudo docker-compose up -d redis inicia el contenedor de docker
+- sudo docker-compose up -d redis 
 - npm run start:dev 
 - inicia el servidor
 
