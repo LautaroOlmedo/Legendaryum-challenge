@@ -41,6 +41,11 @@ export class CoinRepositoryRedis implements ICoinRepository{
 
             const coinKey: string = `coin:${coin.id}`;
             const coinData: string = JSON.stringify(coin);
+
+            const ttlInSeconds: number = 3600;
+            await this.client.setex(coinKey, ttlInSeconds, coinData);
+
+
             await this.client.set(coinKey, coinData);
             await this.client.sadd('coins', coinKey);
 

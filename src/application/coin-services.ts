@@ -22,6 +22,9 @@ export class CoinService {
    public async generate(coinQuantity: number, area: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number }): Promise<Coin[] | Error>{
       try {
           let coins: Coin[] = [];
+          if(!this.validateQuantity(coinQuantity, area)){
+              throw new Error('the three-dimensional area cannot contain this amount of coins')
+          }
 
           for (let i: number = 0; i < coinQuantity; i++) {
               const coinID: string = uuidv4()
@@ -44,9 +47,18 @@ export class CoinService {
 
    private generateRandomPosition(coin: Coin, roomArea: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number }): void{
        const {xmin, xmax, ymin, ymax, zmin, zmax} = roomArea
-           coin.positionX = Math.round(xmin + Math.random() * (xmax - xmin));
-           coin.positionY = Math.round(ymin + Math.random() * (ymax - ymin));
-           coin.positionZ = Math.round(zmin + Math.random() * (zmax - zmin));
+       coin.positionX = Math.round(xmin + Math.random() * (xmax - xmin));
+       coin.positionY = Math.round(ymin + Math.random() * (ymax - ymin));
+       coin.positionZ = Math.round(zmin + Math.random() * (zmax - zmin));
+   }
+
+   private validateQuantity(coinQuantity: number, roomArea: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number }): boolean{
+       const {xmin, xmax, ymin, ymax, zmin, zmax} = roomArea
+       const vol: number = (xmax - xmin + 1) * (ymax - ymin + 1) * (zmax - zmin + 1)
+       if (vol < coinQuantity){
+           return false;
+       }
+       return true;
    }
 
    private validatePosition(): void{}

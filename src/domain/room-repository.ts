@@ -4,5 +4,4 @@ import {Coin} from "./coin";
 export interface IRoomRepository{
     getOne(roomID: string): any
     create(room: Room, coins: Coin[]): Promise<Room | Error>
-    //addCoinsToRoom(roomName: string, coins: Coin[]): Promise<any>
 }
