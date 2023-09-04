@@ -12,8 +12,6 @@ export class CoinRepositoryRedis implements ICoinRepository{
     }
 
     public async getAll(): Promise<Coin[] | Error> {
-        //const client: Redis = this.cacheManager.client;
-
        try {
            const coinKeys: string[] = await this.client.smembers('coins');
            const coins: Coin[] = [];
@@ -31,7 +29,6 @@ export class CoinRepositoryRedis implements ICoinRepository{
     }
 
     public async generate(coin: Coin): Promise<Coin | Error> {
-        //const client: Redis = this.cacheManager.client;
         try {
             const isConnected: boolean = await this.cacheManager.isHealthy();
             if (!isConnected) {
@@ -52,7 +49,7 @@ export class CoinRepositoryRedis implements ICoinRepository{
             //const results = await this.client.exec();
 
             //if (!results.every((result) => result === 'OK')) {
-              //  throw new Error('La transacción en Redis falló');
+              //  throw new Error('the transaction failed');
             //}
             return coin;
         }catch (e) {
