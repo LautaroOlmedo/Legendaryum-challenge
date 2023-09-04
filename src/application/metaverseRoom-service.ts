@@ -26,6 +26,7 @@ export class MetaverseRoomService {
             if(room instanceof Error){
                 throw new Error('failed to create room')
             }
+            console.log("AAAAAAAAAAA", room)
             console.log('room and coins generate whit exit!!')
             return null;
         }catch (e) {

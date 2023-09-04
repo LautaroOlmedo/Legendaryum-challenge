@@ -26,29 +26,27 @@ export class CoinService {
           for (let i: number = 0; i < coinQuantity; i++) {
               const coinID: string = uuidv4()
               const coin: Coin = new Coin(coinID);
+              this.generateRandomPosition(coin, area)
               let generatedCoin: Coin | Error = await this.repository.generate(coin);
               if (generatedCoin instanceof Coin) {
                   coins.push(generatedCoin);
               }else {
-                  console.error('error when generating a coin:', generatedCoin);
-                  return new Error('error when generating a coin');
+                  return new Error('could not create the coin');
               }
           }
-          this.generateRandomPosition(coins, area)
+
           return coins;
       }catch (e) {
-          console.log(e)
-          return new Error('Internal server error');
+          console.error('internal server error', e);
+          throw new Error('internal server error');
       }
    }
 
-   private generateRandomPosition(coins: Coin[], roomArea: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number }): void{
+   private generateRandomPosition(coin: Coin, roomArea: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number }): void{
        const {xmin, xmax, ymin, ymax, zmin, zmax} = roomArea
-       for (let i: number = 0; i < coins.length; i++) {
-           coins[i].positionX = (xmin + Math.random() * (xmax - xmin));
-           coins[i].positionY = (ymin + Math.random() * (ymax - ymin));
-           coins[i].positionZ = (zmin + Math.random() * (zmax - zmin));
-       }
+           coin.positionX = Math.round(xmin + Math.random() * (xmax - xmin));
+           coin.positionY = Math.round(ymin + Math.random() * (ymax - ymin));
+           coin.positionZ = Math.round(zmin + Math.random() * (zmax - zmin));
    }
 
    private validatePosition(): void{}
@@ -67,8 +65,8 @@ export class CoinService {
            }
            return null;
        }catch (e) {
-           console.log(e)
-           throw new Error('internal server error')
+           console.error('internal server error', e);
+           throw new Error('internal server error');
        }
     }
 }

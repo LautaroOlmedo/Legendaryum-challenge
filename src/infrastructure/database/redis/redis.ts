@@ -1,4 +1,3 @@
-import {createClient} from "redis";
 import Redis from 'ioredis'
 
 export class CacheManager{

@@ -15,10 +15,13 @@ export class RoomService{
     async getOne(roomID: string):Promise<Room | Error>{
         try {
             const room: Room | Error = await this.repository.getOne(roomID);
+            if (room instanceof Error) {
+                throw new Error('could not found the room');
+            }
             return room;
         }catch (e) {
-            console.log(e)
-            throw new Error('internal server error')
+            console.error('internal server error', e);
+            throw new Error('internal server error');
         }
     }
 
@@ -27,14 +30,15 @@ export class RoomService{
             const roomID: string = uuidv4();
             const room: Room = new Room(roomID, name);
             const generatedRoom: Room | Error = await this.repository.create(room, coins);
-            if (generatedRoom instanceof Room) {
-                return generatedRoom;
-            }else {
-                throw new Error('no se pudo crear la room');
+
+            if (generatedRoom instanceof Error) {
+                throw new Error('could not create the room');
             }
+            return generatedRoom;
+
         }catch (e) {
-            console.log(e)
-            throw new Error()
+            console.error('internal server error', e);
+            throw new Error('internal server error');
         }
     }
 }
