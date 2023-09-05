@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {ICoinRepository} from "../domain/coin-repository";
 import {Coin} from "../domain/coin";
+import {RoomAreaDTO} from "./DTOs/metaverseRoom-dto";
 
 
 export class CoinService {
@@ -19,25 +20,27 @@ export class CoinService {
            throw new Error('internal server error')
        }
    }
-   public async generate(coinQuantity: number, area: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number }): Promise<Coin[] | Error>{
+   public async generate(coinQuantity: number, area: RoomAreaDTO): Promise<Coin[] | Error>{
+
       try {
-          let coins: Coin[] = [];
           if(!this.validateQuantity(coinQuantity, area)){
               throw new Error('the three-dimensional area cannot contain this amount of coins')
           }
+          let coins: Coin[] = [];
+          let x: number = 0;
+          let y: number = 0;
+          let z: number = 0;
+          let coinArea = {positionX: 0, positionY: 0, positionZ: 0}
 
           for (let i: number = 0; i < coinQuantity; i++) {
-              const coinID: string = uuidv4()
-              const coin: Coin = new Coin(coinID);
-              this.generateRandomPosition(coin, area)
-              let generatedCoin: Coin | Error = await this.repository.generate(coin);
+              coinArea = this.generateCoinPosition(x, y, z, area);
+              let generatedCoin: Coin | Error = await this.repository.generate(coinArea.positionX, coinArea.positionY, coinArea.positionZ);
               if (generatedCoin instanceof Coin) {
                   coins.push(generatedCoin);
               }else {
-                  return new Error('could not create the coin');
+                  throw new Error('could not create the coin');
               }
           }
-
           return coins;
       }catch (e) {
           console.error('internal server error', e);
@@ -45,14 +48,19 @@ export class CoinService {
       }
    }
 
-   private generateRandomPosition(coin: Coin, roomArea: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number }): void{
+   private generateCoinPosition(x: number, y: number, z: number, roomArea: RoomAreaDTO): any{
        const {xmin, xmax, ymin, ymax, zmin, zmax} = roomArea
-       coin.positionX = Math.round(xmin + Math.random() * (xmax - xmin));
-       coin.positionY = Math.round(ymin + Math.random() * (ymax - ymin));
-       coin.positionZ = Math.round(zmin + Math.random() * (zmax - zmin));
+       x = Math.round(xmin + Math.random() * (xmax - xmin));
+       y = Math.round(ymin + Math.random() * (ymax - ymin));
+       z = Math.round(zmin + Math.random() * (zmax - zmin));
+
+       return  {
+           x, y, z
+       }
+
    }
 
-   private validateQuantity(coinQuantity: number, roomArea: { xmin: number; xmax: number; ymin: number; ymax: number; zmin: number; zmax: number }): boolean{
+   private validateQuantity(coinQuantity: number, roomArea: RoomAreaDTO): boolean{
        const {xmin, xmax, ymin, ymax, zmin, zmax} = roomArea
        const vol: number = (xmax - xmin + 1) * (ymax - ymin + 1) * (zmax - zmin + 1)
        if (vol < coinQuantity){
@@ -70,9 +78,9 @@ export class CoinService {
                throw new Error
            }
 
-           for (let i = 0; i < coins.length; i++) {
-               if(coins[i].positionX === sharedPositionX && coins[i].positionY === sharedPositionY && coins[i].positionZ === sharedPositionZ){
-                   await this.repository.delete(coins[i].id);
+           for (let i: number = 0; i < coins.length; i++) {
+               if(coins[i].getPositionX() === sharedPositionX && coins[i].getPositionY() === sharedPositionY && coins[i].getPositionZ()=== sharedPositionZ){
+                   await this.repository.delete(coins[i].getID());
                }
            }
            return null;

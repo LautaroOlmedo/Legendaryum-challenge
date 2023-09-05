@@ -5,6 +5,8 @@ import Redis from 'ioredis';
 import {Coin} from "../../../domain/coin";
 import {ICoinRepository} from "../../../domain/coin-repository";
 import {CacheManager} from "./redis";
+import {RoomAreaDTO} from "../../../application/DTOs/metaverseRoom-dto";
+import {v4 as uuidv4} from "uuid";
 
 
 export class CoinRepositoryRedis implements ICoinRepository{
@@ -28,15 +30,17 @@ export class CoinRepositoryRedis implements ICoinRepository{
        }
     }
 
-    public async generate(coin: Coin): Promise<Coin | Error> {
+    public async generate(positionX: number, positionY: number, positionZ: number): Promise<Coin | Error> {
         try {
             const isConnected: boolean = await this.cacheManager.isHealthy();
             if (!isConnected) {
                 throw new Error('could not connect to Redis');
             }
             //await this.client.multi();
+            const coinID: string = uuidv4()
+            const coin: Coin = new Coin(coinID, positionX, positionY, positionZ);
 
-            const coinKey: string = `coin:${coin.id}`;
+            const coinKey: string = `coin:${coin.getID()}`;
             const coinData: string = JSON.stringify(coin);
 
             const ttlInSeconds: number = 3600;
@@ -57,6 +61,7 @@ export class CoinRepositoryRedis implements ICoinRepository{
             throw new Error('internal server error');
         }
     }
+
 
     delete(coinID: string): Promise<any> {
         return Promise.resolve(undefined);

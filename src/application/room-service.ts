@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+
 
 // ---------- ---------- ---------- ---------- ----------
 
@@ -12,24 +12,12 @@ export class RoomService{
     constructor(private readonly repository: IRoomRepository) {
     }
 
-    async getOne(roomID: string):Promise<Room | Error>{
-        try {
-            const room: Room | Error = await this.repository.getOne(roomID);
-            if (room instanceof Error) {
-                throw new Error('could not found the room');
-            }
-            return room;
-        }catch (e) {
-            console.error('internal server error', e);
-            throw new Error('internal server error');
-        }
-    }
 
-    async create(name: string, coins: Coin[]): Promise<Room | Error>{
+
+    async create(roomName: string): Promise<Room | Error>{
         try {
-            const roomID: string = uuidv4();
-            const room: Room = new Room(roomID, name);
-            const generatedRoom: Room | Error = await this.repository.create(room, coins);
+
+            const generatedRoom: Room | Error = await this.repository.create(roomName);
 
             if (generatedRoom instanceof Error) {
                 throw new Error('could not create the room');

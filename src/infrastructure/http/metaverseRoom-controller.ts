@@ -16,7 +16,7 @@ export class MetaverseRoomController{
             roomWhitCoins.roomName = roomName;
             roomWhitCoins.roomArea = roomArea;
             roomWhitCoins.coinQuantity = coinQuantity
-            const response = await this.metaverseService.createRoomWithCoins(roomWhitCoins)
+            const response = await this.metaverseService.createRoomWithCoins(roomName, roomArea, coinQuantity)
 
             if (response instanceof Error){
                 res.status(500).send('ERROR')

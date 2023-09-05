@@ -1,8 +1,6 @@
 import socketIo from 'socket.io';
-import {Server as WebSocketServer} from 'socket.io'
 import { Server as HttpServer } from 'http';
-import express from 'express';
-import {RoomService} from "../../application/room-service";
+
 
 export class SocketServer {
     private io: socketIo.Server;
@@ -12,21 +10,36 @@ export class SocketServer {
         this.setupSocketConnection();
     }
 
-    public setupSocketConnection() {
+    public setupSocketConnection(): void {
         this.io.on('connection', (socket) => {
-            console.log('Cliente conectado:', socket.id);
+           socket.on("client:joinServer", (username: string): void =>{
+               const user = {
+                   username,
+                   id: socket.id
+               }
+               socket.emit('server:hello', 'can you hear me?', 1, 2, 'abc');
+           });
 
-            socket.on('client:joinRoom', data => {
-                console.log(data)
-                //const room = metaverseRoomService.getOne(data.room.id)
-                socket.emit( "server:joinedRoom",`user ${data.user.name} joined the room`)
+           socket.on("client:createRoom", async ({roomName, coinsQuantity, roomArea}): Promise<void> => {
+               //if(metaverseRoomService.createRoomWhitCoins(roomName, coinsQuantity, roomArea)){
+               //    socket.emit("server:roomCreated", `Sala ${roomName} creada con éxito`);
+               //};
+               //socket.emit('server:createdRoomError', 'Error en la creación de la sala');
+           });
 
-            });
+           socket.on("client:joinRoom", async (roomName: string, username: string): Promise<void> =>{
+               //if(metaverseRoomService.getOne(roomName)){
+               //    socket.join(roomName);
+               //    socket.to(roomName).emit("server:connectedToRoom", `user ${username} is connected`);
+               //}
+           });
 
-
-            socket.on('collectCoin', (coinId) => {
-
-            });
+           socket.on("client:collectCoin", async (roomName, positionX: number, positionY: number, positionZ: number): Promise<void> =>{
+               // if (metaverseRoomService.collectedCoin(positionX, positionY, positionZ)){
+               //     socket.to(roomName).emit("server:collectedCoin", `coin ${1} is collected`);
+               // };
+               //socket.emit('server:collectedCoinError', 'mistake collecting the coin');
+           })
         });
     }
 }
