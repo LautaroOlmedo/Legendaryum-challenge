@@ -23,12 +23,21 @@ export class MetaverseRoomController{
             }else{
                 res.status(201).send('successful')
             }
-
-
-
         }catch (e) {
             console.error(e)
             return e
         }
+    }
+
+    async delete(req: Request, res: Response){
+
+        const {roomID, positionX , positionY, positionZ} = req.body
+        const coinDeleted = await this.metaverseService.collectedCoin(roomID, positionX, positionY, positionZ);
+        if(coinDeleted instanceof Error){
+            res.status(500).send('ERROR')
+        }else{
+            res.send(coinDeleted)
+        }
+
     }
 }

@@ -1,11 +1,15 @@
 import socketIo from 'socket.io';
 import { Server as HttpServer } from 'http';
+import {MetaverseRoomService} from "../../application/metaverseRoom-service";
+
+// ---------- ---------- ---------- ---------- ----------
 
 
 export class SocketServer {
     private io: socketIo.Server;
+    // private readonly metaverseRoomService: MetaverseRoomService
 
-    constructor(httpServer: HttpServer) {
+    constructor(httpServer: HttpServer, ) {
         this.io = new socketIo.Server(httpServer);
         this.setupSocketConnection();
     }
@@ -21,16 +25,17 @@ export class SocketServer {
            });
 
            socket.on("client:createRoom", async ({roomName, coinsQuantity, roomArea}): Promise<void> => {
-               //if(metaverseRoomService.createRoomWhitCoins(roomName, coinsQuantity, roomArea)){
+
+               //if((await this.metaverseRoomService.createRoomWithCoins(roomName, roomArea, coinsQuantity) !== null)){
                //    socket.emit("server:roomCreated", `Sala ${roomName} creada con éxito`);
-               //};
-               //socket.emit('server:createdRoomError', 'Error en la creación de la sala');
+              // };
+               socket.emit('server:createdRoomError', 'Error en la creación de la sala');
            });
 
-           socket.on("client:joinRoom", async (roomName: string, username: string): Promise<void> =>{
-               //if(metaverseRoomService.getOne(roomName)){
-               //    socket.join(roomName);
-               //    socket.to(roomName).emit("server:connectedToRoom", `user ${username} is connected`);
+           socket.on("client:joinRoom", async (roomID: string, username: string): Promise<void> =>{
+               //if(await this.metaverseRoomService.getOne(roomID)){
+               //   socket.join(roomID);
+               //    socket.to(roomID).emit("server:connectedToRoom", `user ${username} is connected`);
                //}
            });
 

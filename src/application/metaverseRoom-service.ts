@@ -19,11 +19,11 @@ export class MetaverseRoomService {
 
     async getOne(roomID: string):Promise<any>{
         try {
-            const room: Room | Error = await this.metaverseRoomRepository.getOneRoom(roomID);
-            if (room instanceof Error) {
+            const metaverseRoom: MetaverseRoom | Error = await this.metaverseRoomRepository.getOneRoom(roomID);
+            if (metaverseRoom instanceof Error) {
                 throw new Error('could not found the room');
             }
-            return room;
+            return metaverseRoom;
         }catch (e) {
             console.error('internal server error', e);
             throw new Error('internal server error');
@@ -55,9 +55,22 @@ export class MetaverseRoomService {
         }
     }
 
-    async collectedCoin(roomID: string, positionX: number, positionY: number, positionZ: number): Promise<any>{
+    async collectedCoin(roomID: string, positionX: number, positionY: number, positionZ: number): Promise<null | Error>{
         try {
-            const collectedCoin = await this.coinService.deleteCoin(positionX, positionY, positionZ);
+            const metaverseRoom: MetaverseRoom | Error = await this.metaverseRoomRepository.getOneRoom(roomID);
+
+            if(metaverseRoom instanceof Error){
+                throw new Error('cannot find the room')
+            }
+            for (let i: number = 0; i < metaverseRoom.getCoins().length; i++) {
+                if(metaverseRoom.getCoins()[i].getPositionX() === positionX && metaverseRoom.getCoins()[i].getPositionY() === positionY && metaverseRoom.getCoins()[i].getPositionZ()=== positionZ){
+                    const coinDeleted: Error | null = await this.coinService.collectCoin(metaverseRoom.getCoins()[i].getID());
+                    if(coinDeleted instanceof Error){
+                        throw new Error('cannot collect the coin');
+                    }
+                }
+            }
+            return null;
         }catch (e) {
             console.log(e);
             return Error('internal server error');

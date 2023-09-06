@@ -13,22 +13,45 @@ export class MetaverseRoomRepositoryRedis implements IMetaverseRoomRepository{
     constructor(private readonly cacheManager: CacheManager) {
     }
 
-    async getOneRoom(roomID: string): Promise<any>{
+    async getOneRoom(roomID: string): Promise<MetaverseRoom | Error>{
         try {
             const isConnected: boolean = await this.cacheManager.isHealthy();
             if (!isConnected) {
                 throw new Error('could not connect to Redis');
             }
             const roomKey: string = `room:${roomID}`;
+            let coins: Coin[] = [];
+
+
 
             if(await this.client.exists(roomKey) === 0){
-                return null
+                throw new Error('room not found');
             }
 
             const roomName: string | null = await this.client.lindex(roomKey, 0);
             const coinKeys: string[] = await this.client.lrange(roomKey, 1, -1);
 
-            return { room: roomID, roomName: roomName, coins: coinKeys };
+            if (!roomName){
+                throw new Error()
+            }
+            const room: Room = new Room(roomID, roomName);
+            for (const coinKey of coinKeys) {
+                const coinData: string | null = await this.client.get(coinKey);
+                if(!coinData){
+                    throw new Error('cannot found the coin');
+                }
+                const coinJSON = JSON.parse(coinData);
+
+                const coin: Coin = new Coin(coinJSON.id)
+                coin.setPositionX(coinJSON.positionX)
+                coin.setPositionY(coinJSON.positionY)
+                coin.setPositionZ(coinJSON.positionZ)
+
+                coins.push(coin)
+            }
+
+            const metaverseRoom: MetaverseRoom = new MetaverseRoom(room.getID(), room, coins);
+            return metaverseRoom
         }catch (e) {
             console.error('internal server error', e);
             throw new Error('internal server error');
@@ -72,6 +95,7 @@ export class MetaverseRoomRepositoryRedis implements IMetaverseRoomRepository{
             throw new Error('internal server error');
         }
     }
+
 
     private client: Redis = this.cacheManager.client;
 }

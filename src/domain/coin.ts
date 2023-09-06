@@ -1,16 +1,18 @@
 export class Coin{
-    constructor(id: string, positionX: number, positionY: number, positionZ: number) {
+    constructor(id: string) {
         this.id = id;
         //this.coinName = coinName;
-        this.positionX = positionX;
-        this.positionY = positionY;
-        this.positionZ = positionZ;
+        this.positionX = 0;
+        this.positionY = 0;
+        this.positionZ = 0;
+        this.collected= false;
     }
 
     private id: string
     private positionX: number
     private positionY: number
     private positionZ: number
+    private collected: boolean
 
     public getID(): string{
         return this.id
@@ -38,5 +40,12 @@ export class Coin{
 
     public setPositionZ(z: number): void{
         this.positionZ = z;
+    }
+
+    getCollected(): boolean{
+        return this.collected
+    }
+    public setCollected(): void{
+        this.collected = true;
     }
 }

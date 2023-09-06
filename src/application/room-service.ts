@@ -12,8 +12,6 @@ export class RoomService{
     constructor(private readonly repository: IRoomRepository) {
     }
 
-
-
     async create(roomName: string): Promise<Room | Error>{
         try {
 

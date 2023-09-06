@@ -13,32 +13,14 @@ export class CoinRepositoryRedis implements ICoinRepository{
     constructor(private readonly cacheManager: CacheManager) {
     }
 
-    public async getAll(): Promise<Coin[] | Error> {
-       try {
-           const coinKeys: string[] = await this.client.smembers('coins');
-           const coins: Coin[] = [];
-           for (const coinKey of coinKeys) {
-               const coinData: string | null = await this.client.get(coinKey);
-               if (coinData) {
-                   coins.push(JSON.parse(coinData));
-               }
-           }
-           return coins;
-       }catch (e) {
-           console.error('internal server error', e);
-           throw new Error('internal server error');
-       }
-    }
 
-    public async generate(positionX: number, positionY: number, positionZ: number): Promise<Coin | Error> {
+    public async generate(coin: Coin): Promise<Coin | Error> {
         try {
             const isConnected: boolean = await this.cacheManager.isHealthy();
             if (!isConnected) {
                 throw new Error('could not connect to Redis');
             }
             //await this.client.multi();
-            const coinID: string = uuidv4()
-            const coin: Coin = new Coin(coinID, positionX, positionY, positionZ);
 
             const coinKey: string = `coin:${coin.getID()}`;
             const coinData: string = JSON.stringify(coin);
@@ -62,9 +44,28 @@ export class CoinRepositoryRedis implements ICoinRepository{
         }
     }
 
+    public async collectCoin(coinID: string): Promise<null | Error> {
+        try {
+            const coinKey: string = `coin:${coinID}`;
+            const coinData: string | null = await this.client.get(coinKey);
+            if(!coinData){
+                throw new Error('cannot found the coin');
+            }
+            const coinJSON = JSON.parse(coinData);
+            const coin: Coin = new Coin(coinJSON.id)
+            coin.setPositionX(coinJSON.positionX)
+            coin.setPositionY(coinJSON.positionY)
+            coin.setPositionZ(coinJSON.positionZ)
 
-    delete(coinID: string): Promise<any> {
-        return Promise.resolve(undefined);
+
+            coin.setCollected();
+            console.log(coin)
+            await this.client.set(`coin:${coin.getID()}`, JSON.stringify(coin));
+            return null
+        } catch (e) {
+            console.error('error while deleting the coin:', e);
+            throw new Error('internal server error');
+        }
     }
 
     private client: Redis = this.cacheManager.client;
