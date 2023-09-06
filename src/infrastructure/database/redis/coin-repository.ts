@@ -57,9 +57,6 @@ export class CoinRepositoryRedis implements ICoinRepository{
             coin.setPositionY(coinJSON.positionY)
             coin.setPositionZ(coinJSON.positionZ)
 
-
-            coin.setCollected();
-            console.log(coin)
             await this.client.set(`coin:${coin.getID()}`, JSON.stringify(coin));
             return null
         } catch (e) {

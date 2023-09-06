@@ -45,7 +45,7 @@ export class Coin{
     getCollected(): boolean{
         return this.collected
     }
-    public setCollected(): void{
-        this.collected = true;
+    public setCollected(isCollected: boolean): void{
+        this.collected = isCollected;
     }
 }

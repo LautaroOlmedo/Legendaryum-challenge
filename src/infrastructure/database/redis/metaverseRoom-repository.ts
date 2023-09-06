@@ -37,17 +37,23 @@ export class MetaverseRoomRepositoryRedis implements IMetaverseRoomRepository{
             const room: Room = new Room(roomID, roomName);
             for (const coinKey of coinKeys) {
                 const coinData: string | null = await this.client.get(coinKey);
+                console.log(coinData)
                 if(!coinData){
                     throw new Error('cannot found the coin');
                 }
                 const coinJSON = JSON.parse(coinData);
+                const collected: boolean = coinJSON.collected;
 
                 const coin: Coin = new Coin(coinJSON.id)
                 coin.setPositionX(coinJSON.positionX)
                 coin.setPositionY(coinJSON.positionY)
                 coin.setPositionZ(coinJSON.positionZ)
-
-                coins.push(coin)
+                coin.setCollected(collected)
+                if(coin.getCollected() === true){
+                    continue;
+                }else{
+                    coins.push(coin)
+                }
             }
 
             const metaverseRoom: MetaverseRoom = new MetaverseRoom(room.getID(), room, coins);
