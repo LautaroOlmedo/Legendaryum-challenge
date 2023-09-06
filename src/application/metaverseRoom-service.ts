@@ -23,7 +23,7 @@ export class MetaverseRoomService {
             if (metaverseRoom instanceof Error) {
                 throw new Error('could not found the room');
             }
-            return metaverseRoom;
+            return metaverseRoom.getCoins();
         }catch (e) {
             console.error('internal server error', e);
             throw new Error('internal server error');
@@ -55,7 +55,7 @@ export class MetaverseRoomService {
         }
     }
 
-    async collectedCoin(roomID: string, positionX: number, positionY: number, positionZ: number): Promise<null | Error>{
+    async collectCoin(roomID: string, positionX: number, positionY: number, positionZ: number): Promise<null | Error>{
         try {
             const metaverseRoom: MetaverseRoom | Error = await this.metaverseRoomRepository.getOneRoom(roomID);
 

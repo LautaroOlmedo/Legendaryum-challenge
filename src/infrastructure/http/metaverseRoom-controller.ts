@@ -32,7 +32,7 @@ export class MetaverseRoomController{
     async delete(req: Request, res: Response){
 
         const {roomID, positionX , positionY, positionZ} = req.body
-        const coinDeleted = await this.metaverseService.collectedCoin(roomID, positionX, positionY, positionZ);
+        const coinDeleted = await this.metaverseService.collectCoin(roomID, positionX, positionY, positionZ);
         if(coinDeleted instanceof Error){
             res.status(500).send('ERROR')
         }else{

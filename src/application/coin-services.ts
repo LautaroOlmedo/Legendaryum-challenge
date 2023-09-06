@@ -50,6 +50,8 @@ export class CoinService {
        const vol: number = (xmax - xmin + 1) * (ymax - ymin + 1) * (zmax - zmin + 1)
        if (vol < coinQuantity){
            return false;
+       }else if(coinQuantity <= 0){
+           return false;
        }
        return true;
    }

@@ -52,7 +52,7 @@ export class MetaverseRoomRepositoryRedis implements IMetaverseRoomRepository{
                 if(coin.getCollected() === true){
                     continue;
                 }else{
-                    coins.push(coin)
+                    coins.push(coin);
                 }
             }
 
